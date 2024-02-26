@@ -16,7 +16,7 @@ import java.util.List;
 public class StatsClient {
 
     private final RestTemplate rest;
-    private final String SERVER_URL = "${stats-service.url}";
+    private final String serverUrl = "${stats-service.url}";
 
     @Autowired
     public StatsClient(RestTemplate rest) {
@@ -24,14 +24,14 @@ public class StatsClient {
     }
 
     public void addStats(SaveCommonDto saveCommonDto) {
-        rest.postForObject(SERVER_URL + "/hit", saveCommonDto, Void.class);
+        rest.postForObject(serverUrl + "/hit", saveCommonDto, Void.class);
     }
 
     public List<GetCommonDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(SERVER_URL + "/stats")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(serverUrl + "/stats")
                 .queryParam("start", start.format(formatter))
                 .queryParam("end", end.format(formatter));
 
