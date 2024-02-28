@@ -7,8 +7,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.GetCommonDto;
-import ru.practicum.SaveCommonDto;
+import ru.practicum.StatsViewDto;
+import ru.practicum.StatsCreateDto;
 import ru.practicum.service.StatsService;
 
 import java.time.LocalDateTime;
@@ -40,16 +40,16 @@ public class StatsControllerTest {
     public void testAdd() throws Exception {
         // given
 
-        SaveCommonDto saveCommonDto = new SaveCommonDto(1, "app", "/uri", "127.0.0.1", LocalDateTime.now());
+        StatsCreateDto statsCreateDto = new StatsCreateDto(1, "app", "/uri", "127.0.0.1", LocalDateTime.now());
 
         // when // then
 
         mvc.perform(post("/hit")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(saveCommonDto)))
+                        .content(mapper.writeValueAsString(statsCreateDto)))
                 .andExpect(status().isOk());
 
-        verify(statsService, times(1)).add(any(SaveCommonDto.class));
+        verify(statsService, times(1)).add(any(StatsCreateDto.class));
     }
 
     @Test
@@ -63,9 +63,9 @@ public class StatsControllerTest {
         LocalDateTime parsedEnd = LocalDateTime.parse(formattedEnd, formatter);
 
 
-        List<GetCommonDto> expectedDtoList = new ArrayList<>();
-        expectedDtoList.add(new GetCommonDto("app", "/uri", 3));
-        expectedDtoList.add(new GetCommonDto("app", "/uri2", 2));
+        List<StatsViewDto> expectedDtoList = new ArrayList<>();
+        expectedDtoList.add(new StatsViewDto("app", "/uri", 3));
+        expectedDtoList.add(new StatsViewDto("app", "/uri2", 2));
         // when
 
         when(statsService.get(parsedStart, parsedEnd, null, false)).thenReturn(expectedDtoList);

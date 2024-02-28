@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.practicum.GetCommonDto;
-import ru.practicum.SaveCommonDto;
+import ru.practicum.StatsViewDto;
+import ru.practicum.StatsCreateDto;
 
 import javax.transaction.Transactional;
 
@@ -23,7 +23,7 @@ public class StatsServiceTest {
 
     private final StatsService service;
 
-    SaveCommonDto saveCommonDto;
+    StatsCreateDto statsCreateDto;
 
     LocalDateTime start = LocalDateTime.now().minusDays(1);
     LocalDateTime end = LocalDateTime.now().plusDays(1);
@@ -33,17 +33,17 @@ public class StatsServiceTest {
     public void testAdd() {
         // given
 
-        saveCommonDto = new SaveCommonDto();
-        saveCommonDto.setApp("app");
-        saveCommonDto.setUri("/uri");
-        saveCommonDto.setIp("192.168.0.1");
-        saveCommonDto.setTimeStamp(LocalDateTime.now());
+        statsCreateDto = new StatsCreateDto();
+        statsCreateDto.setApp("app");
+        statsCreateDto.setUri("/uri");
+        statsCreateDto.setIp("192.168.0.1");
+        statsCreateDto.setTimeStamp(LocalDateTime.now());
 
         // when
-        service.add(saveCommonDto);
+        service.add(statsCreateDto);
 
         // then
-        List<GetCommonDto> result = service.get(start, end, null, false);
+        List<StatsViewDto> result = service.get(start, end, null, false);
         assertEquals(1, result.size());
 
     }
@@ -51,16 +51,16 @@ public class StatsServiceTest {
     @Test
     public void testGetWithoutUris() {
         // given
-        saveCommonDto = new SaveCommonDto();
-        saveCommonDto.setApp("app");
-        saveCommonDto.setUri("/uri");
-        saveCommonDto.setIp("192.168.0.1");
-        saveCommonDto.setTimeStamp(LocalDateTime.now());
+        statsCreateDto = new StatsCreateDto();
+        statsCreateDto.setApp("app");
+        statsCreateDto.setUri("/uri");
+        statsCreateDto.setIp("192.168.0.1");
+        statsCreateDto.setTimeStamp(LocalDateTime.now());
 
-        service.add(saveCommonDto);
+        service.add(statsCreateDto);
 
         // when
-        List<GetCommonDto> result = service.get(start, end, null, false);
+        List<StatsViewDto> result = service.get(start, end, null, false);
 
         // then
         assertEquals(1, result.size());
@@ -69,25 +69,25 @@ public class StatsServiceTest {
     @Test
     public void testGetWithUniqueTrue() {
         // given
-        saveCommonDto = new SaveCommonDto();
-        saveCommonDto.setApp("app");
-        saveCommonDto.setUri("/uri");
-        saveCommonDto.setIp("192.168.0.1");
-        saveCommonDto.setTimeStamp(LocalDateTime.now());
+        statsCreateDto = new StatsCreateDto();
+        statsCreateDto.setApp("app");
+        statsCreateDto.setUri("/uri");
+        statsCreateDto.setIp("192.168.0.1");
+        statsCreateDto.setTimeStamp(LocalDateTime.now());
 
-        service.add(saveCommonDto);
+        service.add(statsCreateDto);
 
-        SaveCommonDto reSaveCommonDto = new SaveCommonDto();
-        reSaveCommonDto.setApp("app");
-        reSaveCommonDto.setUri("/uri");
-        reSaveCommonDto.setIp("192.168.0.1");
-        reSaveCommonDto.setTimeStamp(LocalDateTime.now().plusMinutes(30));
+        StatsCreateDto reStatsCreateDto = new StatsCreateDto();
+        reStatsCreateDto.setApp("app");
+        reStatsCreateDto.setUri("/uri");
+        reStatsCreateDto.setIp("192.168.0.1");
+        reStatsCreateDto.setTimeStamp(LocalDateTime.now().plusMinutes(30));
 
-        service.add(reSaveCommonDto);
+        service.add(reStatsCreateDto);
 
         // when
 
-        List<GetCommonDto> result = service.get(start, end, null, true);
+        List<StatsViewDto> result = service.get(start, end, null, true);
 
         // then
         assertEquals(1, result.size());
@@ -96,26 +96,26 @@ public class StatsServiceTest {
     @Test
     public void testGetWithUris() {
         // given
-        saveCommonDto = new SaveCommonDto();
-        saveCommonDto.setApp("app");
-        saveCommonDto.setUri("/uri1");
-        saveCommonDto.setIp("192.168.0.1");
-        saveCommonDto.setTimeStamp(LocalDateTime.now());
+        statsCreateDto = new StatsCreateDto();
+        statsCreateDto.setApp("app");
+        statsCreateDto.setUri("/uri1");
+        statsCreateDto.setIp("192.168.0.1");
+        statsCreateDto.setTimeStamp(LocalDateTime.now());
 
-        service.add(saveCommonDto);
+        service.add(statsCreateDto);
 
-        SaveCommonDto reSaveCommonDto = new SaveCommonDto();
-        reSaveCommonDto.setApp("app");
-        reSaveCommonDto.setUri("/uri2");
-        reSaveCommonDto.setIp("192.168.0.12");
-        reSaveCommonDto.setTimeStamp(LocalDateTime.now().plusMinutes(30));
+        StatsCreateDto reStatsCreateDto = new StatsCreateDto();
+        reStatsCreateDto.setApp("app");
+        reStatsCreateDto.setUri("/uri2");
+        reStatsCreateDto.setIp("192.168.0.12");
+        reStatsCreateDto.setTimeStamp(LocalDateTime.now().plusMinutes(30));
 
-        service.add(reSaveCommonDto);
+        service.add(reStatsCreateDto);
 
         List<String> uris = Arrays.asList("/uri1", "/uri2");
 
         // when
-        List<GetCommonDto> result = service.get(start, end, uris, false);
+        List<StatsViewDto> result = service.get(start, end, uris, false);
 
         // then
         assertEquals(2, result.size());

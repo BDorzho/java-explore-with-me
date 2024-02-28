@@ -1,13 +1,13 @@
 package ru.practicum.service;
 
-import ru.practicum.GetCommonDto;
-import ru.practicum.SaveCommonDto;
+import ru.practicum.StatsViewDto;
+import ru.practicum.StatsCreateDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatsService {
-    void add(SaveCommonDto saveCommonDto);
+    void add(StatsCreateDto statsCreateDto);
 
-    List<GetCommonDto> get(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique);
+    List<StatsViewDto> get(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique);
 }
