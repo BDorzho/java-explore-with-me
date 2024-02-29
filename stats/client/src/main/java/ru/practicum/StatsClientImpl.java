@@ -1,5 +1,6 @@
 package ru.practicum;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
+@Slf4j
 public class StatsClientImpl implements StatsClient {
 
     private final RestTemplate rest;
@@ -48,14 +50,12 @@ public class StatsClientImpl implements StatsClient {
         try {
             responseEntity = rest.exchange(builder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {
             });
-
             if (responseEntity.getStatusCodeValue() == 200) {
                 return responseEntity.getBody();
-            } else {
-                return Collections.emptyList();
             }
         } catch (Exception e) {
-            return Collections.emptyList();
+            log.error("При выполнении вызова API произошла ошибка: {}", e.getMessage(), e);
         }
+        return Collections.emptyList();
     }
 }
