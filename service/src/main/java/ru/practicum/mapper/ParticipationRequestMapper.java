@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class ParticipationRequestMapper {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter
-            .ofPattern("yyyy.MM.dd hh:mm:ss")
+            .ofPattern("yyyy-MM-dd hh:mm:ss")
             .withZone(ZoneOffset.UTC);
 
 
