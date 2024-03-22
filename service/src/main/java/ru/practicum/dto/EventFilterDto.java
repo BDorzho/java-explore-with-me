@@ -63,6 +63,9 @@ public class EventFilterDto {
                 .build();
     }
 
-    public enum Sort {EVENT_DATE, VIEWS}
+    public enum Sort {
+        EVENT_DATE,
+        VIEWS
+    }
 
 }
