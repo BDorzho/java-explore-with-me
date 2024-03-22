@@ -2,7 +2,6 @@ package ru.practicum.stats.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.stats.service.StatsService;
 import ru.practicum.stats.StatsViewDto;
 import ru.practicum.stats.StatsCreateDto;
-
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -31,7 +29,7 @@ public class StatsController {
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@Valid @RequestBody StatsCreateDto statsCreateDto) {
         log.info("Запись информации о посещении");
-        statsCreateDto.setTimeStamp(LocalDateTime.parse(statsCreateDto.getTimeStamp().format(formatter), formatter));
+        statsCreateDto.setTimeStamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter));
         service.add(statsCreateDto);
         log.info("Запись успешна сохранена");
     }

@@ -7,6 +7,7 @@ import ru.practicum.stats.dao.StatsRepository;
 import ru.practicum.stats.mapper.StatsMapper;
 import ru.practicum.stats.StatsViewDto;
 import ru.practicum.stats.StatsCreateDto;
+import ru.practicum.stats.validation.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -44,7 +45,7 @@ public class StatsServiceImpl implements StatsService {
 
     private void validateDate(LocalDateTime start, LocalDateTime end) {
         if (start == null || end == null || start.isAfter(end)) {
-            throw new IllegalArgumentException("Invalid date range. Start date should not be after end date and both dates should not be empty.");
+            throw new ValidationException("Invalid date range. Start date should not be after end date and both dates should not be empty.");
         }
     }
 }
