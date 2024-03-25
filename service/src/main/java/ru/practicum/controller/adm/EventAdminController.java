@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.EventFilterDto;
 import ru.practicum.dto.EventFullDto;
-import ru.practicum.dto.UpdateEventAdminRequestDto;
+import ru.practicum.dto.EventUpdateAdminRequestDto;
 import ru.practicum.service.EventService;
 import ru.practicum.validation.OnUpdate;
 import ru.practicum.validation.validators.Validation;
@@ -30,7 +30,7 @@ public class EventAdminController {
 
 
     @GetMapping
-    public List<EventFullDto> findEvents(@RequestParam(required = false) List<Long> users,
+    public List<EventFullDto> find(@RequestParam(required = false) List<Long> users,
                                          @RequestParam(required = false) List<String> states,
                                          @RequestParam(required = false) List<Long> categories,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
@@ -44,7 +44,7 @@ public class EventAdminController {
 
         EventFilterDto filter = EventFilterDto.fromQueryParams(users, states, categories, rangeStart, rangeEnd);
 
-        List<EventFullDto> events = service.findAdminEvents(filter, pageable);
+        List<EventFullDto> events = service.findBy(filter, pageable);
 
         log.info("Событии найдены");
 
@@ -52,14 +52,14 @@ public class EventAdminController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateEvent(@PathVariable Long eventId,
-                                    @Validated(OnUpdate.class) @RequestBody UpdateEventAdminRequestDto updateEventAdminRequest) {
+    public EventFullDto update(@PathVariable Long eventId,
+                                    @Validated(OnUpdate.class) @RequestBody EventUpdateAdminRequestDto updateEventAdminRequest) {
 
         log.info("Редактирование данных события и его статуса (отклонения/публикация)");
 
         validation.date(updateEventAdminRequest.getEventDate());
 
-        EventFullDto updateEvent = service.updateAdminEvent(eventId, updateEventAdminRequest);
+        EventFullDto updateEvent = service.update(eventId, updateEventAdminRequest);
 
         log.info("Событие успешно отредактировано");
 

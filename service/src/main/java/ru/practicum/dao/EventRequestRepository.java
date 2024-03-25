@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ru.practicum.dto.EventConfirmedRequestsInfo;
 import ru.practicum.model.ParticipationRequest;
 import ru.practicum.model.RequestStatus;
 
@@ -30,9 +31,9 @@ public interface EventRequestRepository extends JpaRepository<ParticipationReque
     Optional<ParticipationRequest> findByIdAndRequesterId(Long requestId, Long id);
 
 
-    @Query("SELECT pr.event.id, count(pr.id) " +
+    @Query("SELECT new ru.practicum.dto.EventConfirmedRequestsInfo(pr.event.id, COUNT(pr.id)) " +
             "FROM ParticipationRequest pr " +
             "WHERE pr.event.id IN :eventIds AND pr.status = 'CONFIRMED' " +
             "GROUP BY pr.event.id")
-    List<Object[]> countConfirmedRequestsByEventIds(@Param("eventIds") List<Long> eventIds);
+    List<EventConfirmedRequestsInfo> countConfirmedRequestsByEventIds(@Param("eventIds") List<Long> eventIds);
 }

@@ -43,12 +43,6 @@ public class EventPublicController {
     ) {
         log.info("Получение событий с возможностью фильтрации");
 
-        StatsCreateDto statsCreateDto = new StatsCreateDto("ewm-main-service",
-                request.getRequestURI(),
-                request.getRemoteAddr(),
-                LocalDateTime.now());
-        client.add(statsCreateDto);
-
         if (rangeStart == null) {
             rangeStart = LocalDateTime.now();
         }
@@ -57,36 +51,48 @@ public class EventPublicController {
             throw new ValidationException("Время окончания не может быть раньше времени начала");
         }
 
+        try {
+            addStats(request);
 
-        Pageable pageable = PageRequest.of(from / size, size);
+            Pageable pageable = PageRequest.of(from / size, size);
 
-        EventFilterDto filter = EventFilterDto.fromQueryParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort);
+            EventFilterDto filter = EventFilterDto.fromQueryParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort);
 
-        List<EventShortDto> events = eventService.findPublic(filter, pageable);
+            List<EventShortDto> events = eventService.getBy(filter, pageable);
 
-        log.info("События найдены");
+            log.info("События найдены");
 
-
-        return events;
+            return events;
+        } catch (Exception e) {
+            log.error("Ошибка при получении событий: {}", e.getMessage());
+            throw e;
+        }
     }
 
     @GetMapping("/{id}")
     public EventFullDto getById(@PathVariable Long id, HttpServletRequest request) {
-
         log.info("Получение подробной информации об опубликованном событии по его идентификатору");
 
+        try {
+            addStats(request);
+
+            EventFullDto event = eventService.findBy(id);
+
+            log.info("Событие найдено");
+
+            return event;
+        } catch (Exception e) {
+            log.error("Ошибка при получении события: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    private void addStats(HttpServletRequest request) {
         StatsCreateDto statsCreateDto = new StatsCreateDto("ewm-main-service",
                 request.getRequestURI(),
                 request.getRemoteAddr(),
                 LocalDateTime.now());
         client.add(statsCreateDto);
-
-        EventFullDto event = eventService.findByIdPublic(id);
-
-        log.info("Событие найдено");
-
-
-        return event;
     }
 }
 

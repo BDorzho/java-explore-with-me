@@ -9,6 +9,7 @@ import ru.practicum.dao.EventRepository;
 import ru.practicum.dao.EventRequestRepository;
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.CompilationInfoDto;
+import ru.practicum.dto.EventConfirmedRequestsInfo;
 import ru.practicum.dto.EventShortDto;
 import ru.practicum.mapper.CompilationMapper;
 import ru.practicum.mapper.EventMapper;
@@ -17,6 +18,7 @@ import ru.practicum.model.Event;
 import ru.practicum.service.CompilationService;
 import ru.practicum.validation.exception.NotFoundException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -149,14 +151,14 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private Map<Long, Long> getConfirmedRequestsByEventIds(List<Long> eventIds) {
+        List<EventConfirmedRequestsInfo> results = eventRequestRepository.countConfirmedRequestsByEventIds(eventIds);
 
-        List<Object[]> result = eventRequestRepository.countConfirmedRequestsByEventIds(eventIds);
+        Map<Long, Long> confirmedRequestsMap = new HashMap<>();
+        for (EventConfirmedRequestsInfo result : results) {
+            confirmedRequestsMap.put(result.getEventId(), result.getConfirmedRequests());
+        }
 
-        return result.stream()
-                .collect(Collectors.toMap(
-                        arr -> (Long) arr[0],
-                        arr -> (Long) arr[1]
-                ));
+        return confirmedRequestsMap;
     }
 
 

@@ -7,23 +7,23 @@ import ru.practicum.dto.*;
 import java.util.List;
 
 public interface EventService {
-    List<EventShortDto> getInitiatorEvents(Long userId, Pageable pageable);
+    List<EventShortDto> findBy(Long initiatorId, Pageable pageable);
 
-    EventInfoDto add(Long userId, EventDto eventDto);
+    EventInfoDto add(Long initiatorId, EventDto eventDto);
 
-    EventFullDto getEventDetails(Long userId, Long eventId);
+    EventFullDto get(Long initiatorId, Long eventId);
 
-    EventInfoDto update(Long userId, Long eventId, UpdateEventUserDto updateEventUserDto);
+    EventInfoDto update(Long initiatorId, Long eventId, EventUpdateUserDto eventUpdateUserDto);
 
-    List<ParticipationRequestDto> getRequests(Long userId, Long eventId);
+    List<ParticipationRequestDto> getRequests(Long initiatorId, Long eventId);
 
-    EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId, UpdateEventRequestStatusDto updateEventRequestStatusDto);
+    EventRequestStatusUpdateResult update(Long initiatorId, Long eventId, EventUpdateRequestStatusDto eventUpdateRequestStatusDto);
 
-    List<EventFullDto> findAdminEvents(EventFilterDto filter, Pageable pageable);
+    List<EventFullDto> findBy(EventFilterDto adminFilter, Pageable pageable);
 
-    EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequestDto updateEventAdminRequest);
+    EventFullDto update(Long eventId, EventUpdateAdminRequestDto updateEventAdminRequest);
 
-    List<EventShortDto> findPublic(EventFilterDto filter, Pageable pageable);
+    List<EventShortDto> getBy(EventFilterDto publicFilter, Pageable pageable);
 
-    EventFullDto findByIdPublic(Long id);
+    EventFullDto findBy(Long eventId);
 }

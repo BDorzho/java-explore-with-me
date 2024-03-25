@@ -27,13 +27,13 @@ public class EventPrivateController {
     private final Validation validation;
 
     @GetMapping
-    public List<EventShortDto> getInitiatorEvents(@PathVariable Long userId,
-                                                  @RequestParam(defaultValue = "0") int from,
-                                                  @RequestParam(defaultValue = "10") int size) {
+    public List<EventShortDto> get(@PathVariable Long userId,
+                                   @RequestParam(defaultValue = "0") int from,
+                                   @RequestParam(defaultValue = "10") int size) {
 
         log.info("Получение событий, добавленных текущим пользователем");
         Pageable pageable = PageRequest.of(from / size, size);
-        List<EventShortDto> userEvents = eventService.getInitiatorEvents(userId, pageable);
+        List<EventShortDto> userEvents = eventService.findBy(userId, pageable);
         log.info("События найдены");
 
         return userEvents;
@@ -53,11 +53,11 @@ public class EventPrivateController {
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto getEventDetails(@PathVariable Long userId,
-                                        @PathVariable Long eventId) {
+    public EventFullDto getDetails(@PathVariable Long userId,
+                                   @PathVariable Long eventId) {
 
         log.info("Получение полной информации о событии добавленном текущим пользователем");
-        EventFullDto eventInfoDto = eventService.getEventDetails(userId, eventId);
+        EventFullDto eventInfoDto = eventService.get(userId, eventId);
         log.info("Событие найдено");
 
         return eventInfoDto;
@@ -66,21 +66,21 @@ public class EventPrivateController {
     @PatchMapping("/{eventId}")
     public EventInfoDto update(@PathVariable Long userId,
                                @PathVariable Long eventId,
-                               @Validated(OnUpdate.class) @RequestBody UpdateEventUserDto updateEventUserDto) {
+                               @Validated(OnUpdate.class) @RequestBody EventUpdateUserDto eventUpdateUserDto) {
 
         log.info("Изменение события добавленного текущим пользователем");
 
-        validation.date(updateEventUserDto.getEventDate());
+        validation.date(eventUpdateUserDto.getEventDate());
 
-        EventInfoDto updatedEvent = eventService.update(userId, eventId, updateEventUserDto);
+        EventInfoDto updatedEvent = eventService.update(userId, eventId, eventUpdateUserDto);
         log.info("Событие обновлено");
 
         return updatedEvent;
     }
 
     @GetMapping("/{eventId}/requests")
-    public List<ParticipationRequestDto> getRequests(@PathVariable Long userId,
-                                                     @PathVariable Long eventId) {
+    public List<ParticipationRequestDto> get(@PathVariable Long userId,
+                                             @PathVariable Long eventId) {
 
         log.info("Получение информации о запросах на участие в событии текушего пользователя");
         List<ParticipationRequestDto> eventRequests = eventService.getRequests(userId, eventId);
@@ -89,12 +89,12 @@ public class EventPrivateController {
     }
 
     @PatchMapping("/{eventId}/requests")
-    public EventRequestStatusUpdateResult updateEventRequestStatus(@PathVariable Long userId,
-                                                                   @PathVariable Long eventId,
-                                                                   @Validated(OnUpdate.class) @RequestBody UpdateEventRequestStatusDto updateEventRequestStatusDto) {
+    public EventRequestStatusUpdateResult update(@PathVariable Long userId,
+                                                 @PathVariable Long eventId,
+                                                 @Validated(OnUpdate.class) @RequestBody EventUpdateRequestStatusDto eventUpdateRequestStatusDto) {
 
         log.info("Изменение статуса(подтверждена/отменена) заявок на участие в событии текушего пользователя");
-        EventRequestStatusUpdateResult updatedRequests = eventService.updateRequestStatus(userId, eventId, updateEventRequestStatusDto);
+        EventRequestStatusUpdateResult updatedRequests = eventService.update(userId, eventId, eventUpdateRequestStatusDto);
         log.info("Статус заявок изменен");
 
         return updatedRequests;

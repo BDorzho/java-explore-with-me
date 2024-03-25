@@ -8,7 +8,7 @@ import ru.practicum.model.EventState;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateEventAdminDto {
+public class EventUpdateAdminDto {
 
     private Long id;
 

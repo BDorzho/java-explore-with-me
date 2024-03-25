@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateEventRequestStatusDto {
+public class EventUpdateRequestStatusDto {
 
     @NotEmpty(message = "Список идентификаторов запросов не может быть пустым")
     private List<Long> requestIds;
