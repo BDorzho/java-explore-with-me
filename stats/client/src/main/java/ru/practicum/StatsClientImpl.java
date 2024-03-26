@@ -3,59 +3,66 @@ package ru.practicum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.*;
+import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.dto.StatsRequestParams;
+import ru.practicum.stats.StatsCreateDto;
+import ru.practicum.stats.StatsViewDto;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Component
+@Service
 @Slf4j
 public class StatsClientImpl implements StatsClient {
 
-    private final RestTemplate rest;
-    private final String serverUrl;
+    private static final String ADD_API_URL = "/hit";
+    private static final String GET_API_URL = "/stats";
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final RestTemplate restTemplate;
 
     @Autowired
-    public StatsClientImpl(RestTemplate rest, @Value("http://localhost:9090") String serverUrl) {
-        this.rest = rest;
-        this.serverUrl = serverUrl;
+    public StatsClientImpl(@Value("${spring.stats-service.uri}") String serverUrl, RestTemplateBuilder builder) {
+        this.restTemplate = builder
+                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                .build();
     }
 
     @Override
     public void add(StatsCreateDto statsCreateDto) {
-        rest.postForObject(serverUrl + "/hit", statsCreateDto, Void.class);
+        ResponseEntity<Void> response = restTemplate.postForEntity(ADD_API_URL, statsCreateDto, Void.class);
+        if (response.getStatusCode() != HttpStatus.CREATED) {
+            log.error("Failed to add statistics entry. Status code: {}", response.getStatusCodeValue());
+        }
     }
 
     @Override
     public List<StatsViewDto> get(StatsRequestParams params) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(serverUrl + "/stats")
-                .queryParam("start", params.getStart().format(formatter))
-                .queryParam("end", params.getEnd().format(formatter));
 
-        if (params.getUris() != null && !params.getUris().isEmpty()) {
-            builder.queryParam("uris", String.join(",", params.getUris()));
-        }
+        String url = GET_API_URL + "?start=" + formatter.format(params.getStart()) +
+                "&end=" + formatter.format(params.getEnd()) +
+                "&uris=" + String.join(",", params.getUris()) +
+                "&unique=" + params.isUnique();
 
-        builder.queryParam("unique", params.isUnique());
-
-        ResponseEntity<List<StatsViewDto>> responseEntity;
         try {
-            responseEntity = rest.exchange(builder.toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-            });
-            if (responseEntity.getStatusCodeValue() == 200) {
-                return responseEntity.getBody();
+            ResponseEntity<StatsViewDto[]> response = restTemplate.getForEntity(url, StatsViewDto[].class);
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                return Arrays.asList(response.getBody());
             }
-        } catch (Exception e) {
-            log.error("При выполнении вызова API произошла ошибка: {}", e.getMessage(), e);
+        } catch (HttpClientErrorException e) {
+            log.error("Error during API call: {} - {}", e.getRawStatusCode(), e.getResponseBodyAsString());
+        } catch (RestClientException e) {
+            log.error("Error during API call: {}", e.getMessage());
         }
+
         return Collections.emptyList();
     }
 }
