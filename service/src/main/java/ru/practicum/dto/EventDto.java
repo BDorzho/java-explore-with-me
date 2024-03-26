@@ -28,6 +28,8 @@ public class EventDto {
     @NotNull(message = "Категория не может быть пустым", groups = OnCreate.class)
     private Long category;
 
+    private long initiatorId;
+
     private Boolean paid = false;
 
     @ValidEventDate

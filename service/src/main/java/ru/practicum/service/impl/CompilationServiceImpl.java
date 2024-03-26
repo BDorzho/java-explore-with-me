@@ -59,7 +59,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public void delete(Long compId) {
+    public void delete(long compId) {
         repository.deleteById(compId);
     }
 
@@ -130,7 +130,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional(readOnly = true)
-    public CompilationInfoDto getById(Long compId) {
+    public CompilationInfoDto getById(long compId) {
         Compilation compilation = repository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation with id=" + compId + " was not found"));
 
