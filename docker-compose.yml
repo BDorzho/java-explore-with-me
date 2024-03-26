@@ -11,6 +11,7 @@ services:
       - POSTGRES_DB=stats_service_db
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+      - TZ=Asia/Irkutsk
 
   ewm-db:
     image: postgres:14-alpine
@@ -21,6 +22,7 @@ services:
       - POSTGRES_DB=main_service_db
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+      - TZ=Asia/Irkutsk
 
   stats-server:
     build: stats/service
@@ -33,6 +35,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db/stats_service_db
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
+      - TZ=Asia/Irkutsk
 
   ewm-service:
     build: service
@@ -46,4 +49,5 @@ services:
       - SPRING_STATS-SERVICE_URI=http://stats-server:9090
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
+      - TZ=Asia/Irkutsk
 
