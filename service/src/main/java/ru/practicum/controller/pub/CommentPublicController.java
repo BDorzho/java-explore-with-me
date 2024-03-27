@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.CommentDto;
 import ru.practicum.service.CommentService;
@@ -24,7 +25,7 @@ public class CommentPublicController {
                                     @RequestParam(defaultValue = "10") int size) {
 
         log.info("Получение комментариев для конкретного события");
-        Pageable pageable = PageRequest.of(from / size, size);
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "created"));
         List<CommentDto> commentList = service.getBy(eventId, pageable);
 
         log.info("Событие найдено");

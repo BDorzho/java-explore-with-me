@@ -52,5 +52,7 @@ CREATE TABLE IF NOT EXISTS comments (
   event_id BIGINT REFERENCES event(id) ON DELETE CASCADE,
   author_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
   text TEXT,
-  created TIMESTAMP WITHOUT TIME ZONE
+  created TIMESTAMP WITHOUT TIME ZONE,
+  UNIQUE(event_id, author_id)
+
 );

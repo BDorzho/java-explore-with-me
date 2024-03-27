@@ -1,7 +1,9 @@
 package ru.practicum.mapper;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.dto.CommentCreateDto;
 import ru.practicum.dto.CommentDto;
+import ru.practicum.dto.UserShortDto;
 import ru.practicum.model.Comment;
 import ru.practicum.model.Event;
 import ru.practicum.model.User;
@@ -18,7 +20,7 @@ public class CommentMapper {
             .withZone(ZoneOffset.UTC);
 
 
-    public Comment toModel(CommentDto commentDto, Event event, User user) {
+    public Comment toModel(CommentCreateDto commentDto, Event event, User user) {
         return new Comment(commentDto.getId(),
                 event,
                 user,
@@ -28,8 +30,7 @@ public class CommentMapper {
 
     public CommentDto toDto(Comment comment) {
         return new CommentDto(comment.getId(),
-                comment.getEvent().getId(),
-                comment.getAuthor().getId(),
+                new UserShortDto(comment.getAuthor().getId(), comment.getAuthor().getName()),
                 comment.getText(),
                 formatter.format(comment.getCreated()));
     }

@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NamedEntityGraph(
         name = "comment-entity-graph",
         attributeNodes = {
-                @NamedAttributeNode("event"),
                 @NamedAttributeNode("author")
         }
 )

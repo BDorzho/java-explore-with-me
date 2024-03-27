@@ -8,6 +8,7 @@ import ru.practicum.dao.CommentRepository;
 import ru.practicum.dao.EventRepository;
 import ru.practicum.dao.EventRequestRepository;
 import ru.practicum.dao.UserRepository;
+import ru.practicum.dto.CommentCreateDto;
 import ru.practicum.dto.CommentDto;
 import ru.practicum.dto.CommentUpdateDto;
 import ru.practicum.mapper.CommentMapper;
@@ -35,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto add(CommentDto comment) {
+    public CommentDto add(CommentCreateDto comment) {
         long authorId = comment.getAuthorId();
         long eventId = comment.getEventId();
 
@@ -59,11 +60,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public CommentDto get(long authorId, long eventId) {
-        userRepository.findById(authorId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + authorId + " was not found"));
-
-        eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
         Comment comment = repository.findByEventIdAndAuthorId(eventId, authorId)
                 .orElseThrow(() -> new NotFoundException("Comment not found for userId=" + authorId + " and eventId=" + eventId));
@@ -74,8 +70,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto update(CommentUpdateDto commentUpdateDto) {
+
         Comment existingComment = repository.findById(commentUpdateDto.getId())
                 .orElseThrow(() -> new NotFoundException("Comment with id=" + commentUpdateDto.getId() + " was not found"));
+
+
+        if (existingComment.getAuthor().getId() != commentUpdateDto.getAuthor()) {
+            throw new ConflictException("You are not authorized to update this comment");
+        }
 
         existingComment.setText(commentUpdateDto.getText());
 

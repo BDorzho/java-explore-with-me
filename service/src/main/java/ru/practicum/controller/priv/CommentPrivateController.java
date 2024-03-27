@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.dto.CommentCreateDto;
 import ru.practicum.dto.CommentDto;
 import ru.practicum.dto.CommentUpdateDto;
 import ru.practicum.service.CommentService;
@@ -24,7 +25,7 @@ public class CommentPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto add(@PathVariable long userId,
                           @RequestParam long eventId,
-                          @Valid @RequestBody CommentDto comment) {
+                          @Valid @RequestBody CommentCreateDto comment) {
 
         log.info("Добавление нового комментария {}", eventId);
 
