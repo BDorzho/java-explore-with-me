@@ -51,40 +51,33 @@ public class EventPublicController {
             throw new ValidationException("Время окончания не может быть раньше времени начала");
         }
 
-        try {
-            addStats(request);
+        Pageable pageable = PageRequest.of(from / size, size);
 
-            Pageable pageable = PageRequest.of(from / size, size);
+        EventFilterDto filter = EventFilterDto.fromQueryParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort);
 
-            EventFilterDto filter = EventFilterDto.fromQueryParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort);
+        List<EventShortDto> events = eventService.getBy(filter, pageable);
 
-            List<EventShortDto> events = eventService.getBy(filter, pageable);
+        log.info("События найдены");
 
-            log.info("События найдены");
+        addStats(request);
 
-            return events;
-        } catch (Exception e) {
-            log.error("Ошибка при получении событий: {}", e.getMessage());
-            throw e;
-        }
+        return events;
+
     }
 
     @GetMapping("/{id}")
-    public EventFullDto getById(@PathVariable Long id, HttpServletRequest request) {
+    public EventFullDto getById(@PathVariable long id, HttpServletRequest request) {
+
         log.info("Получение подробной информации об опубликованном событии по его идентификатору");
 
-        try {
-            addStats(request);
+        EventFullDto event = eventService.findBy(id);
 
-            EventFullDto event = eventService.findBy(id);
+        log.info("Событие найдено");
 
-            log.info("Событие найдено");
+        addStats(request);
 
-            return event;
-        } catch (Exception e) {
-            log.error("Ошибка при получении события: {}", e.getMessage());
-            throw e;
-        }
+        return event;
+
     }
 
     private void addStats(HttpServletRequest request) {

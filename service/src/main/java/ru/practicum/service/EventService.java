@@ -9,21 +9,21 @@ import java.util.List;
 public interface EventService {
     List<EventShortDto> findBy(Long initiatorId, Pageable pageable);
 
-    EventInfoDto add(Long initiatorId, EventDto eventDto);
+    EventInfoDto add(EventDto eventDto);
 
-    EventFullDto get(Long initiatorId, Long eventId);
+    EventFullDto get(long initiatorId, long eventId);
 
-    EventInfoDto update(Long initiatorId, Long eventId, EventUpdateUserDto eventUpdateUserDto);
+    EventInfoDto update(InitiatorEventUpdateDto initiatorEventUpdateDto);
 
-    List<ParticipationRequestDto> getRequests(Long initiatorId, Long eventId);
+    List<ParticipationRequestDto> getRequests(long initiatorId, long eventId);
 
-    EventRequestStatusUpdateResult update(Long initiatorId, Long eventId, EventUpdateRequestStatusDto eventUpdateRequestStatusDto);
+    EventRequestStatusUpdateResult update(EventUpdateRequestStatusDto eventUpdateRequestStatusDto);
 
     List<EventFullDto> findBy(EventFilterDto adminFilter, Pageable pageable);
 
-    EventFullDto update(Long eventId, EventUpdateAdminRequestDto updateEventAdminRequest);
+    EventFullDto update(EventUpdateAdminRequestDto updateEventAdminRequest);
 
     List<EventShortDto> getBy(EventFilterDto publicFilter, Pageable pageable);
 
-    EventFullDto findBy(Long eventId);
+    EventFullDto findBy(long eventId);
 }

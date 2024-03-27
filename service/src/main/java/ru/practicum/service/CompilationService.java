@@ -10,11 +10,11 @@ public interface CompilationService {
 
     CompilationInfoDto add(CompilationDto compilationDto);
 
-    void delete(Long compId);
+    void delete(long compId);
 
     CompilationInfoDto update(CompilationDto compilationDto);
 
     List<CompilationInfoDto> get(Boolean pinned, Pageable pageable);
 
-    CompilationInfoDto getById(Long compId);
+    CompilationInfoDto getById(long compId);
 }

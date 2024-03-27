@@ -68,8 +68,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventInfoDto add(Long initiatorId, EventDto eventDto) {
-        Long categoryId = eventDto.getCategory();
+    public EventInfoDto add(EventDto eventDto) {
+        long categoryId = eventDto.getCategory();
+        long initiatorId = eventDto.getInitiatorId();
+
         User initiator = userRepository.findById(initiatorId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + initiatorId + " was not found"));
         Category category = categoryRepository.findById(categoryId)
@@ -83,7 +85,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public EventFullDto get(Long initiatorId, Long eventId) {
+    public EventFullDto get(long initiatorId, long eventId) {
         userRepository.findById(initiatorId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + initiatorId + " was not found"));
 
@@ -97,7 +99,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventInfoDto update(Long initiatorId, Long eventId, EventUpdateUserDto eventUpdateUserDto) {
+    public EventInfoDto update(InitiatorEventUpdateDto initiatorEventUpdateDto) {
+        long eventId = initiatorEventUpdateDto.getEventId();
+        long initiatorId = initiatorEventUpdateDto.getInitiatorId();
+
         userRepository.findById(initiatorId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + initiatorId + " was not found"));
 
@@ -108,20 +113,20 @@ public class EventServiceImpl implements EventService {
             throw new ConflictException("Only pending or canceled events can be changed");
         }
 
-        if (eventUpdateUserDto.getCategory() != null) {
-            Category category = categoryRepository.findById(eventUpdateUserDto.getCategory())
-                    .orElseThrow(() -> new NotFoundException("Category with id=" + eventUpdateUserDto.getCategory() + " was not found"));
+        if (initiatorEventUpdateDto.getCategory() != null) {
+            Category category = categoryRepository.findById(initiatorEventUpdateDto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Category with id=" + initiatorEventUpdateDto.getCategory() + " was not found"));
             event.setCategory(category);
         }
 
-        updateEventFields(event, eventUpdateUserDto);
+        updateEventFields(event, initiatorEventUpdateDto);
 
         return mapper.toDto(eventRepository.save(event));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ParticipationRequestDto> getRequests(Long initiatorId, Long eventId) {
+    public List<ParticipationRequestDto> getRequests(long initiatorId, long eventId) {
         userRepository.findById(initiatorId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + initiatorId + " was not found"));
 
@@ -137,7 +142,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventRequestStatusUpdateResult update(Long initiatorId, Long eventId, EventUpdateRequestStatusDto eventUpdateRequestStatusDto) {
+    public EventRequestStatusUpdateResult update(EventUpdateRequestStatusDto eventUpdateRequestStatusDto) {
+        long eventId = eventUpdateRequestStatusDto.getEventId();
+        long initiatorId = eventUpdateRequestStatusDto.getInitiatorId();
+
         userRepository.findById(initiatorId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + initiatorId + " was not found"));
 
@@ -223,7 +231,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto update(Long eventId, EventUpdateAdminRequestDto updateEventAdminRequest) {
+    public EventFullDto update(EventUpdateAdminRequestDto updateEventAdminRequest) {
+
+        long eventId = updateEventAdminRequest.getId();
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
@@ -284,7 +294,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto findBy(Long eventId) {
+    public EventFullDto findBy(long eventId) {
 
         Event event = eventRepository.findPublishedEvents(eventId, EventState.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
@@ -335,27 +345,27 @@ public class EventServiceImpl implements EventService {
     }
 
 
-    private void updateEventFields(Event event, EventUpdateUserDto eventUpdateUserDto) {
-        if (eventUpdateUserDto.getAnnotation() != null) {
-            event.setAnnotation(eventUpdateUserDto.getAnnotation());
+    private void updateEventFields(Event event, InitiatorEventUpdateDto initiatorEventUpdateDto) {
+        if (initiatorEventUpdateDto.getAnnotation() != null) {
+            event.setAnnotation(initiatorEventUpdateDto.getAnnotation());
         }
-        if (eventUpdateUserDto.getDescription() != null) {
-            event.setDescription(eventUpdateUserDto.getDescription());
+        if (initiatorEventUpdateDto.getDescription() != null) {
+            event.setDescription(initiatorEventUpdateDto.getDescription());
         }
-        if (eventUpdateUserDto.getEventDate() != null) {
-            event.setEventDate(eventUpdateUserDto.getEventDate());
+        if (initiatorEventUpdateDto.getEventDate() != null) {
+            event.setEventDate(initiatorEventUpdateDto.getEventDate());
         }
-        if (eventUpdateUserDto.getLocation() != null) {
-            event.setLocation(eventUpdateUserDto.getLocation());
+        if (initiatorEventUpdateDto.getLocation() != null) {
+            event.setLocation(initiatorEventUpdateDto.getLocation());
         }
-        if (eventUpdateUserDto.getPaid() != null) {
-            event.setPaid(eventUpdateUserDto.getPaid());
+        if (initiatorEventUpdateDto.getPaid() != null) {
+            event.setPaid(initiatorEventUpdateDto.getPaid());
         }
-        if (eventUpdateUserDto.getParticipantLimit() != 0) {
-            event.setParticipantLimit(eventUpdateUserDto.getParticipantLimit());
+        if (initiatorEventUpdateDto.getParticipantLimit() != 0) {
+            event.setParticipantLimit(initiatorEventUpdateDto.getParticipantLimit());
         }
-        if (eventUpdateUserDto.getStateAction() != null) {
-            switch (eventUpdateUserDto.getStateAction()) {
+        if (initiatorEventUpdateDto.getStateAction() != null) {
+            switch (initiatorEventUpdateDto.getStateAction()) {
                 case SEND_TO_REVIEW:
                     event.setState(EventState.PENDING);
                     break;
@@ -364,8 +374,8 @@ public class EventServiceImpl implements EventService {
                     break;
             }
         }
-        if (eventUpdateUserDto.getTitle() != null) {
-            event.setTitle(eventUpdateUserDto.getTitle());
+        if (initiatorEventUpdateDto.getTitle() != null) {
+            event.setTitle(initiatorEventUpdateDto.getTitle());
         }
     }
 

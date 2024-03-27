@@ -14,6 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 public class EventUpdateRequestStatusDto {
 
+    private long eventId;
+
+    private long initiatorId;
+
     @NotEmpty(message = "Список идентификаторов запросов не может быть пустым")
     private List<Long> requestIds;
 

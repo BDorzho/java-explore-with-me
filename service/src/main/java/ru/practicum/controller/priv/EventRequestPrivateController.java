@@ -18,7 +18,7 @@ public class EventRequestPrivateController {
     private final EventRequestService service;
 
     @GetMapping
-    public List<ParticipationRequestDto> get(@PathVariable Long userId) {
+    public List<ParticipationRequestDto> get(@PathVariable long userId) {
         log.info("Получение информации о заявках текущего пользователя на участие в чужих событиях");
         List<ParticipationRequestDto> participationRequest = service.getById(userId);
         log.info("Найдены запросы на участие");
@@ -27,8 +27,8 @@ public class EventRequestPrivateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto add(@PathVariable Long userId,
-                                       @RequestParam Long eventId) {
+    public ParticipationRequestDto add(@PathVariable long userId,
+                                       @RequestParam long eventId) {
         log.info("Добавление запроса от текущего пользователя на участие в событии");
         ParticipationRequestDto participationRequest = service.add(userId, eventId);
         log.info("Заявка создана");
@@ -36,8 +36,8 @@ public class EventRequestPrivateController {
     }
 
     @PatchMapping("/{requestId}/cancel")
-    public ParticipationRequestDto cancel(@PathVariable Long userId,
-                                          @PathVariable Long requestId) {
+    public ParticipationRequestDto cancel(@PathVariable long userId,
+                                          @PathVariable long requestId) {
         log.info("Отмена своего запроса на участие в событии");
         ParticipationRequestDto participationRequest = service.cancel(userId, requestId);
         log.info("Заявка отменена");

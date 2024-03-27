@@ -14,7 +14,9 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class EventUpdateUserDto {
+public class InitiatorEventUpdateDto {
+
+    private long eventId;
 
     @Size(min = 20, max = 2000, message = "Аннотация должна содержать от 20 до 2000 символов", groups = OnUpdate.class)
     @Nullable
@@ -22,6 +24,8 @@ public class EventUpdateUserDto {
 
     @Nullable
     private Long category;
+
+    private long initiatorId;
 
     @Size(min = 20, max = 7000, message = "Описание должно содержать от 20 до 7000 символов.", groups = OnUpdate.class)
     @Nullable
