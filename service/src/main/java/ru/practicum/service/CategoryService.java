@@ -8,11 +8,11 @@ import java.util.List;
 public interface CategoryService {
     CategoryDto add(CategoryDto categoryDto);
 
-    void delete(Long catId);
+    void delete(long catId);
 
     CategoryDto update(CategoryDto categoryDto);
 
     List<CategoryDto> getAll(Pageable pageable);
 
-    CategoryDto getById(Long catId);
+    CategoryDto getById(long catId);
 }

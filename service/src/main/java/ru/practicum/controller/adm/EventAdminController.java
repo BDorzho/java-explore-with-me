@@ -31,12 +31,12 @@ public class EventAdminController {
 
     @GetMapping
     public List<EventFullDto> find(@RequestParam(required = false) List<Long> users,
-                                         @RequestParam(required = false) List<String> states,
-                                         @RequestParam(required = false) List<Long> categories,
-                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                         @RequestParam(required = false, defaultValue = "0") int from,
-                                         @RequestParam(required = false, defaultValue = "10") int size) {
+                                   @RequestParam(required = false) List<String> states,
+                                   @RequestParam(required = false) List<Long> categories,
+                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+                                   @RequestParam(required = false, defaultValue = "0") int from,
+                                   @RequestParam(required = false, defaultValue = "10") int size) {
 
         log.info("Поиск событий");
 
@@ -52,14 +52,16 @@ public class EventAdminController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto update(@PathVariable Long eventId,
-                                    @Validated(OnUpdate.class) @RequestBody EventUpdateAdminRequestDto updateEventAdminRequest) {
+    public EventFullDto update(@PathVariable long eventId,
+                               @Validated(OnUpdate.class) @RequestBody EventUpdateAdminRequestDto updateEventAdminRequest) {
 
         log.info("Редактирование данных события и его статуса (отклонения/публикация)");
 
         validation.date(updateEventAdminRequest.getEventDate());
 
-        EventFullDto updateEvent = service.update(eventId, updateEventAdminRequest);
+        updateEventAdminRequest.setId(eventId);
+
+        EventFullDto updateEvent = service.update(updateEventAdminRequest);
 
         log.info("Событие успешно отредактировано");
 

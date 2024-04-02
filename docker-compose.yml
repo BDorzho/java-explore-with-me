@@ -12,6 +12,7 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
+
   ewm-db:
     image: postgres:14-alpine
     container_name: ewm-db
@@ -22,6 +23,7 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
+
   stats-server:
     build: stats/service
     container_name: stats-server
@@ -31,6 +33,8 @@ services:
       - "9090:9090"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db/stats_service_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
 
 
   ewm-service:
@@ -43,5 +47,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db/main_service_db
       - SPRING_STATS-SERVICE_URI=http://stats-server:9090
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
 
 

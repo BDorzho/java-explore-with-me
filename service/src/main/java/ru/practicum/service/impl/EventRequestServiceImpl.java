@@ -30,7 +30,7 @@ public class EventRequestServiceImpl implements EventRequestService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ParticipationRequestDto> getById(Long userId) {
+    public List<ParticipationRequestDto> getById(long userId) {
 
         List<ParticipationRequest> request = repository.findByRequesterId(userId);
 
@@ -43,7 +43,7 @@ public class EventRequestServiceImpl implements EventRequestService {
 
     @Override
     @Transactional
-    public ParticipationRequestDto add(Long userId, Long eventId) {
+    public ParticipationRequestDto add(long userId, long eventId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
 
@@ -66,7 +66,7 @@ public class EventRequestServiceImpl implements EventRequestService {
 
     @Override
     @Transactional
-    public ParticipationRequestDto cancel(Long userId, Long requestId) {
+    public ParticipationRequestDto cancel(long userId, long requestId) {
         ParticipationRequest request = repository.findByIdAndRequesterId(requestId, userId)
                 .orElseThrow(() -> new NotFoundException("Request with id " + requestId + " was not found"));
 

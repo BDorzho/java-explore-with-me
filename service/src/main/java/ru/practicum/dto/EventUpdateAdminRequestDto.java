@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventUpdateAdminRequestDto {
 
+    private Long id;
+
     @Size(min = 20, max = 2000, message = "Краткое описание должно содержать от 20 до 2000 символов.", groups = OnUpdate.class)
     private String annotation;
 
